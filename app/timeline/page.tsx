@@ -1,6 +1,12 @@
 import { LogEntry } from "@/app/types/log";
 
-export default function Timeline({ logs }: { logs: LogEntry[] }) {
+let logs: LogEntry[] = [
+  { id: "1", type: "sleep", startTime: Date.now() - 1000 * 60 * 60 },
+  { id: "2", type: "feed", startTime: Date.now() - 1000 * 60 * 30, details: "left" },
+  { id: "3", type: "diaper", startTime: Date.now() - 1000 * 60 * 10 },
+];
+
+export default function TimelinePage() {
   if (logs.length === 0) {
     return (
       <div className="bg-neutral-900 p-4 rounded-2xl text-sm text-neutral-400">
@@ -28,24 +34,3 @@ export default function Timeline({ logs }: { logs: LogEntry[] }) {
     </div>
   )
 }
-
-{/* <div className="space-y-4">
-  <h2 className="text-sm text-neutral-400">Today</h2>
-
-  <div className="bg-neutral-900 rounded-2xl p-4 space-y-3">
-    <div className="flex justify-between text-sm">
-      <span>😴 Nap</span>
-      <span className="text-neutral-400">2:10 – 3:05</span>
-    </div>
-
-    <div className="flex justify-between text-sm">
-      <span>🍼 Feed</span>
-      <span className="text-neutral-400">3:15 (Left)</span>
-    </div>
-
-    <div className="flex justify-between text-sm">
-      <span>🧷 Diaper</span>
-      <span className="text-neutral-400">4:00</span>
-    </div>
-  </div>
-</div> */}
