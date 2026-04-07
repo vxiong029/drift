@@ -1,14 +1,28 @@
 "use client";
 import { LogEntry } from "@/app/types/log";
 import { useLogs } from "../../context/LogsContext";
+import { useState } from "react";
 
 export default function Section({ title, logs }: { title: string, logs: LogEntry[] }) {
   const { deleteLog } = useLogs();
+  const [deletingIds, setDeletingIds] = useState<string[]>([]);
 
   const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this log?')) {
-      deleteLog(id);
-    }    
+    // if (confirm('Are you sure you want to delete this log?')) {
+    setDeletingIds([...deletingIds, id]);
+
+    setTimeout(() => {
+      deleteLog(id)
+      setDeletingIds((prev) => prev.filter((i) => i !== id))
+    }, 350);
+    // }
+  }
+
+  const formatTime = (log: LogEntry) => {
+    return new Date(log.startTime).toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: '2-digit',
+    })
   }
 
   if (logs.length === 0) {
@@ -19,22 +33,41 @@ export default function Section({ title, logs }: { title: string, logs: LogEntry
     )
   }
   return (
-    <div className="space-y-4">
-      <h2 className="text-sm text-neutral-400">{title}</h2>
+    <div className="space-y-3">
+      <h2 className="text-xs text-neutral-500 uppercase tracking-wide px-1">
+        {title}
+      </h2>
 
-      <div className="bg-neutral-900 rounded-2xl p-4 space-y-3">
+      <div className="bg-neutral-900/70 backdrop-blur rounded-2xl divide-y divide-neutral-800">
         <ul className="space-y-2 text-sm">
           {logs.map((log) => (
-            <li className="flex justify-between items-center" key={log.id}>
+            <li className={`flex items-center justify-between px-4 py-3 
+              ${deletingIds.includes(log.id) ? 'bg-neutral-800/50 transition duration-350 ease-in-out opacity-0 scale-95 max-h-0 py-0 overflow-hidden'
+                : 'opacity-100 scale-100 max-h-20'}`}
+              key={log.id}>
               <span>
-                {log.type === 'sleep' && '😴 Nap'}
+                {log.type === 'sleep' && '😴 Sleep'}
                 {log.type === 'feed' && '🍼 Feed'}
                 {log.type === 'diaper' && '🧷 Diaper'}
-                {log.startTime && ` · ${new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                 {log.details && ` (${log.details})`}
               </span>
-              
-              <button className="text-xs text-neutral-500 hover:text-red-400" onClick={() => handleDelete(log.id)}>X</button>
+
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-neutral-400">
+                  {formatTime(log)}
+                </span>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(log.id);
+                  }}
+                  className="text-neutral-500 text-red-400 text-sm transition active:scale-90"
+                >
+                  ✕
+                </button>
+              </div>
+
             </li>
           ))}
         </ul>

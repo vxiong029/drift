@@ -1,6 +1,7 @@
 import { LogEntry } from "@/app/types/log";
 import Section from "./Section";
 import { groupByDay, formatDateLabel } from "@/app/lib/groupedLogs";
+import { useState } from "react";
 
 export default function Timeline({ logs }: { logs: LogEntry[] }) {
   // Sort logs by startTime in descending order
