@@ -8,6 +8,7 @@ interface LogsContextType {
   logs: LogEntry[];
   addLog: (type: LogType, description?: string) => void;
   clearLogs: () => void;
+  deleteLog: (id: string) => void;
 }
 
 // Create the context
@@ -20,7 +21,7 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Load logs from localStorage on mount
     const storedLogs = storage.getLogs();
     setLogs(storedLogs);
-  }, []);
+  }, [logs]); // Re-run if the list of logs changes
 
   const addLog = (type: LogType, description?: string) => {
     const newLog: LogEntry = {
@@ -39,8 +40,13 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLogs([]);
   };
 
+  const deleteLog = (id: string) => {
+    const updatedLogs = storage.deleteLog(id);
+    setLogs(updatedLogs);
+  }
+
   return (
-    <LogsContext.Provider value={{ logs, addLog, clearLogs }}>
+    <LogsContext.Provider value={{ logs, addLog, clearLogs, deleteLog }}>
       {children}
     </LogsContext.Provider>
   );

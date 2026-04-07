@@ -1,4 +1,5 @@
 import { LogEntry } from "@/app/types/log";
+import { deleteLog } from "@/app/lib/storage";
 
 export default function Timeline({ logs }: { logs: LogEntry[] }) {
   if (logs.length === 0) {
@@ -7,6 +8,12 @@ export default function Timeline({ logs }: { logs: LogEntry[] }) {
         No activity yet
       </div>
     )
+  }
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this log?')) {
+      deleteLog(id);
+    }    
   }
   return (
     <div className="space-y-4">
@@ -21,6 +28,7 @@ export default function Timeline({ logs }: { logs: LogEntry[] }) {
               {log.type === 'diaper' && '🧷 Diaper'}
               {log.startTime && ` · ${new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
               {log.details && ` (${log.details})`}
+              <button className="ml-2 text-xs text-neutral-500 hover:text-red-400 active:scale-95" onClick={() => handleDelete(log.id)}>X</button>
             </li>
           ))}
         </ul>

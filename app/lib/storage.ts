@@ -42,7 +42,7 @@ export function getLogs(): LogEntry[] {
         startTime: new Date(Date.now()).getTime(), 
       },
     ]
-    
+
     saveLogs(seed)
     return seed
   }
@@ -57,6 +57,15 @@ export function clearLogs() {
 export function addLog(newLog: LogEntry): LogEntry[] {
   const existing = getLogs()
   const updated = [newLog, ...existing]
+
+  saveLogs(updated)
+
+  return updated
+}
+
+export function deleteLog(id: string): LogEntry[] {
+  const existing = getLogs()
+  const updated = existing.filter(log => log.id !== id)
 
   saveLogs(updated)
 
