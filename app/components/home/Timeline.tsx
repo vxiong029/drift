@@ -1,43 +1,44 @@
 import { LogEntry } from "@/app/types/log";
 import { useLogs } from "@/app/context/LogsContext";
+import Section from "./Section";
+
+const groupByDay = (logs: LogEntry[]) => {
+  return logs.reduce((groups: Record<string, LogEntry[]>, log) => {
+    const dateKey = new Date(log.startTime).toDateString();
+    if (!groups[dateKey]) {
+      groups[dateKey] = [];
+    }
+    groups[dateKey].push(log);
+    return groups;
+  }, {});
+}
+
+const formatDateLabel = (dateStr: string) => {
+  const date = new Date(dateStr);
+  const today = new Date();
+
+  if (date.toDateString() === today.toDateString()) return 'Today';
+
+  return date.toLocaleDateString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
 
 export default function Timeline({ logs }: { logs: LogEntry[] }) {
-  const { deleteLog } = useLogs();
+  const sortedLogs = [...logs].sort(
+  (a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+  );
 
-  if (logs.length === 0) {
-    return (
-      <div className="bg-neutral-900 p-4 rounded-2xl text-sm text-neutral-400">
-        No activity yet
-      </div>
-    )
-  }
-
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this log?')) {
-      deleteLog(id);
-    }    
-  }
   return (
-    <div className="space-y-4">
-      <h2 className="text-sm text-neutral-400">Today</h2>
-
-      <div className="bg-neutral-900 rounded-2xl p-4 space-y-3">
-        <ul className="space-y-2 text-sm">
-          {logs.map((log) => (
-            <li className="flex justify-between items-center" key={log.id}>
-              <span>
-                {log.type === 'sleep' && '😴 Nap'}
-                {log.type === 'feed' && '🍼 Feed'}
-                {log.type === 'diaper' && '🧷 Diaper'}
-                {log.startTime && ` · ${new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-                {log.details && ` (${log.details})`}
-              </span>
-              
-              <button className="text-xs text-neutral-500 hover:text-red-400" onClick={() => handleDelete(log.id)}>X</button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <>  
+      {Object.entries(groupByDay(sortedLogs))
+        .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
+        .map(([date, dayLogs]) =>
+        (
+          <Section key={date} title={formatDateLabel(date)} logs={dayLogs} />
+        ))}
+    </>
   )
 }
