@@ -21,7 +21,7 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Load logs from localStorage on mount
     const storedLogs = storage.getLogs();
     setLogs(storedLogs);
-  }, [logs]); // Re-run if the list of logs changes
+  }, []); 
 
   const addLog = (type: LogType, description?: string) => {
     const newLog: LogEntry = {

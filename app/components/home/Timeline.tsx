@@ -1,7 +1,9 @@
 import { LogEntry } from "@/app/types/log";
-import { deleteLog } from "@/app/lib/storage";
+import { useLogs } from "@/app/context/LogsContext";
 
 export default function Timeline({ logs }: { logs: LogEntry[] }) {
+  const { deleteLog } = useLogs();
+
   if (logs.length === 0) {
     return (
       <div className="bg-neutral-900 p-4 rounded-2xl text-sm text-neutral-400">
@@ -20,15 +22,18 @@ export default function Timeline({ logs }: { logs: LogEntry[] }) {
       <h2 className="text-sm text-neutral-400">Today</h2>
 
       <div className="bg-neutral-900 rounded-2xl p-4 space-y-3">
-        <ul className="mt-2 space-y-2 text-sm">
+        <ul className="space-y-2 text-sm">
           {logs.map((log) => (
-            <li key={log.id}>
-              {log.type === 'sleep' && '😴 Nap'}
-              {log.type === 'feed' && '🍼 Feed'}
-              {log.type === 'diaper' && '🧷 Diaper'}
-              {log.startTime && ` · ${new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-              {log.details && ` (${log.details})`}
-              <button className="ml-2 text-xs text-neutral-500 hover:text-red-400 active:scale-95" onClick={() => handleDelete(log.id)}>X</button>
+            <li className="flex justify-between items-center" key={log.id}>
+              <span>
+                {log.type === 'sleep' && '😴 Nap'}
+                {log.type === 'feed' && '🍼 Feed'}
+                {log.type === 'diaper' && '🧷 Diaper'}
+                {log.startTime && ` · ${new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                {log.details && ` (${log.details})`}
+              </span>
+              
+              <button className="text-xs text-neutral-500 hover:text-red-400" onClick={() => handleDelete(log.id)}>X</button>
             </li>
           ))}
         </ul>
