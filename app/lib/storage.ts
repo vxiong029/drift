@@ -34,7 +34,18 @@ export function getLogs(): LogEntry[] {
   const data = localStorage.getItem(STORAGE_KEY);
   const parsed = parse<any[]>(data)
 
-  if (!parsed) return []
+  if (!parsed) {
+    const seed: LogEntry[] = [
+      {
+        id: '1',
+        type: 'sleep',
+        startTime: new Date(Date.now()).getTime(), 
+      },
+    ]
+    
+    saveLogs(seed)
+    return seed
+  }
 
   return reviveDates(parsed)
 }
