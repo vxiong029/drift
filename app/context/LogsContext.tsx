@@ -7,6 +7,7 @@ import * as storage from "../lib/storage";
 interface LogsContextType {
   logs: LogEntry[];
   activeLog: LogEntry | null;
+  addLog: (type: LogType, description?: string) => void;
   startLog: (type: LogType, description?: string) => void;
   stopLog: (id: string) => void;
   clearLogs: () => void;
@@ -26,18 +27,18 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLogs(storedLogs);
   }, []); 
 
-  // const addLog = (type: LogType, description?: string) => {
-  //   const newLog: LogEntry = {
-  //     id: crypto.randomUUID(),
-  //     type,
-  //     startTime: new Date().getTime(),
-  //     details: description,
-  //     status: 'active',
-  //   }
+  const addLog = (type: LogType, description?: string) => {
+    const newLog: LogEntry = {
+      id: crypto.randomUUID(),
+      type,
+      startTime: new Date().getTime(),
+      details: description,
+      status: null,
+    }
 
-  //   const updatedLogs = storage.addLog(newLog);
-  //   setLogs(updatedLogs);
-  // };
+    const updatedLogs = storage.addLog(newLog);
+    setLogs(updatedLogs);
+  };
 
   const startLog = (type: LogType, description?: string) => {
     if (activeLog) {
@@ -86,7 +87,7 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   return (
-    <LogsContext.Provider value={{ logs, activeLog, startLog, stopLog, clearLogs, deleteLog }}>
+    <LogsContext.Provider value={{ logs, activeLog, addLog, startLog, stopLog, clearLogs, deleteLog }}>
       {children}
     </LogsContext.Provider>
   );

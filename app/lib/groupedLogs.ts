@@ -23,3 +23,16 @@ export function formatDateLabel(dateStr: string) {
     day: 'numeric',
   });
 }
+
+export function formatDuration(log: LogEntry) {
+  const start = new Date(log.startTime).getTime();
+  const end = log.endTime ? new Date(log.endTime).getTime() : Date.now();
+  const elapsed = end - start;
+
+  const totalSeconds = Math.floor(elapsed / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${hours > 0 ? hours + 'h ' : ''}${minutes > 0 ? minutes + 'm ' : ''}${seconds}s`;
+}

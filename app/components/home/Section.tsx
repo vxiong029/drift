@@ -2,6 +2,7 @@
 import { LogEntry } from "@/app/types/log";
 import { useLogs } from "../../context/LogsContext";
 import { useState } from "react";
+import { formatDuration } from "@/app/lib/groupedLogs";
 
 export default function Section({ title, logs }: { title: string, logs: LogEntry[] }) {
   const { deleteLog } = useLogs();
@@ -54,8 +55,20 @@ export default function Section({ title, logs }: { title: string, logs: LogEntry
 
               <div className="flex items-center gap-3">
                 <span className="text-sm text-neutral-400">
-                  {formatTime(log)}
+                  {formatTime(log)} 
                 </span>
+
+                {log.type !== 'diaper' &&
+                  <>
+                    <span className="text-sm text-neutral-400">
+                      {`·`}
+                    </span>
+
+                    <span className="text-sm text-neutral-400">
+                      {formatDuration(log)}
+                    </span>
+                  </>
+                }
 
                 <button
                   onClick={(e) => {

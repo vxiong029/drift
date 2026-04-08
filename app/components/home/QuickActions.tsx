@@ -6,12 +6,11 @@ import { LogType } from "@/app/types/log";
 
 const actions: { type: LogType, icon: string, label: string }[] = [
   { type: 'sleep', icon: '😴', label: 'Sleep' },
-  { type: 'feed', icon: '🍼', label: 'Feed' },
-  { type: 'diaper', icon: '🧷', label: 'Diaper' }
+  { type: 'feed', icon: '🍼', label: 'Feed' }
 ];
 
 export default function QuickActions() {
-  const { activeLog, startLog, stopLog } = useLogs();
+  const { activeLog, addLog, startLog, stopLog } = useLogs();
 
   const handleClick = (type: LogType) => {
     if (activeLog) {
@@ -43,6 +42,12 @@ export default function QuickActions() {
           />
         );
       })}
+      <Button
+        label="🧷 Diaper"
+        onClickHandle={() => {addLog('diaper')}}
+        isActive={false}
+        disabled={false}
+      />
     </div>
   )
 }

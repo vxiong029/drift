@@ -6,5 +6,5 @@ export interface LogEntry {
   startTime: number;
   endTime?: number;
   details?: string;
-  status: 'active' | 'completed';
+  status: 'active' | 'completed' | null;
 }
