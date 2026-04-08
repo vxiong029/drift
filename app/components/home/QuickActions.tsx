@@ -1,14 +1,48 @@
 "use client";
+import { start } from "repl";
 import { useLogs } from "../../context/LogsContext";
+import Button from "./Button";
+import { LogType } from "@/app/types/log";
+
+const actions: { type: LogType, icon: string, label: string }[] = [
+  { type: 'sleep', icon: '😴', label: 'Sleep' },
+  { type: 'feed', icon: '🍼', label: 'Feed' },
+  { type: 'diaper', icon: '🧷', label: 'Diaper' }
+];
 
 export default function QuickActions() {
-  const { addLog } = useLogs();
+  const { activeLog, startLog, stopLog } = useLogs();
+
+  const handleClick = (type: LogType) => {
+    if (activeLog) {
+      if (activeLog.type == type) {
+        stopLog(activeLog.id);
+      }
+      console.log("activeLog:", activeLog);
+    } else {
+      startLog(type);
+    }
+  };
 
   return (
     <div className="grid grid-cols-3 gap-3">
-      <button className="bg-neutral-800 p-4 rounded-2xl active:scale-95 transition" onClick={() => addLog('sleep')}>😴 Sleep</button>
-      <button className="bg-neutral-800 p-4 rounded-2xl active:scale-95 transition" onClick={() => addLog('feed')}>🍼 Feed</button>
-      <button className="bg-neutral-800 p-4 rounded-2xl active:scale-95 transition" onClick={() => addLog('diaper')}>🧷 Diaper</button>
+      {actions.map(({ type, icon, label }) => {
+        const isActive = activeLog?.type === type;
+
+        return (
+          <Button
+            key={type}
+            label={
+              isActive
+                ? `⏹ Stop ${label}`
+                : `${icon} ${label}`
+            }
+            onClickHandle={() => handleClick(type)}
+            isActive={isActive}
+            disabled={!!activeLog && !isActive} 
+          />
+        );
+      })}
     </div>
   )
 }

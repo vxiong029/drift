@@ -39,7 +39,8 @@ export function getLogs(): LogEntry[] {
       {
         id: '1',
         type: 'sleep',
-        startTime: new Date(Date.now()).getTime(), 
+        startTime: new Date().getTime(), 
+        status: 'active',
       },
     ]
 
