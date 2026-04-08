@@ -28,7 +28,7 @@ export default function Section({ title, logs }: { title: string, logs: LogEntry
   if (logs.length === 0) {
     return (
       <div className="bg-neutral-900 p-4 rounded-2xl text-sm text-neutral-400">
-        No activity yet
+        No activity yet today.
       </div>
     )
   }

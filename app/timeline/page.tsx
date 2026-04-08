@@ -4,7 +4,6 @@ import { useLogs } from "../context/LogsContext";
 
 export default function TimelinePage() {
   const { logs } = useLogs();
-
   return (
     <>
       <Timeline logs={logs} />
