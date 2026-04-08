@@ -1,5 +1,4 @@
 "use client";
-import { useLogs } from "../../context/LogsContext";
 
 export default function Button({
   label,
