@@ -26,13 +26,6 @@ export default function Section({ title, logs }: { title: string, logs: LogEntry
     })
   }
 
-  if (logs.length === 0) {
-    return (
-      <div className="bg-neutral-900 p-4 rounded-2xl text-sm text-neutral-400">
-        No activity yet today.
-      </div>
-    )
-  }
   return (
     <div className="space-y-3">
       <h2 className="text-xs text-neutral-500 uppercase tracking-wide px-1">
@@ -58,7 +51,7 @@ export default function Section({ title, logs }: { title: string, logs: LogEntry
                   {formatTime(log)} 
                 </span>
 
-                {log.type !== 'diaper' &&
+                {log.type !== 'diaper' && log.status === 'completed' &&
                   <>
                     <span className="text-sm text-neutral-400">
                       {`·`}

@@ -9,6 +9,13 @@ export default function Timeline({ logs }: { logs: LogEntry[] }) {
   (a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
   );
 
+  if (sortedLogs.length === 0) {
+    return (
+      <div className="bg-neutral-900 p-4 rounded-2xl text-sm text-neutral-400">
+        No activity for today yet.
+      </div>
+     )
+  }
   return (
     <>  
       {Object.entries(groupByDay(sortedLogs))
