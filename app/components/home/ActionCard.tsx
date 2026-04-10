@@ -1,18 +1,13 @@
-const options = {
-  feed: ['left', 'right', 'both'],
-  diaper: ['pee', 'poop', 'both'],
-};
-
 export function ActionCard({ 
   isOpen, 
-  type, 
+  options, 
   description, 
   onClick 
 }: { 
   isOpen: boolean; 
-  type: string; 
+  options: {label: string; value: string}[]; 
   description: string; 
-  onClick: (detail: string) => void 
+  onClick: (value: string) => void 
 }) {
   return (
     <div
@@ -28,14 +23,14 @@ export function ActionCard({
           </p>
 
           <div className="grid grid-cols-3 gap-2">
-            {options[type as keyof typeof options].map((option) => (
+            {options.map((option) => (
               <button
-                key={option}
+                key={option.value}
                 className={`
                   py-2 rounded-xl bg-neutral-800 text-sm active:scale-95 transition`}
-                onClick={() => onClick(option)}
+                onClick={() => onClick(option.value)}
               >
-                {option.charAt(0).toUpperCase() + option.slice(1)}
+                {option.label}
               </button>
             ))}
           </div>

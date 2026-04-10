@@ -1,77 +1,75 @@
 "use client";
-import { start } from "repl";
 import { useLogs } from "../../context/LogsContext";
 import Button from "./Button";
 import { LogType } from "@/app/types/log";
 import { useState } from "react";
 import { ActionCard } from "./ActionCard";
-
-const actions: { type: LogType, icon: string, label: string, description?: string }[] = [
-  { type: 'sleep', icon: '😴', label: 'Sleep' },
-  { type: 'feed', icon: '🍼', label: 'Feed', description: 'Select which side the baby fed on' },
-  { type: 'diaper', icon: '🧷', label: 'Diaper', description: 'Select which type of diaper change' },
-];
+import { ACTION_CONFIG } from "@/app/types/action";
+import { typedEntries } from "@/app/lib/helper";
 
 export default function QuickActions() {
   const { activeLog, addLog, startLog, stopLog } = useLogs();
-  const [expandedAction, setExpandedAction] = useState<'feed' | 'diaper' | null>(null);
+  const [expandedAction, setExpandedAction] = useState<LogType | null>(null);
 
-  const toggle = (type: LogType) => {
+  const handleMainActionClick = (type: LogType) => {
+    const config = ACTION_CONFIG[type];
+
+    // If there's an active log of the same type, stop it
     if (activeLog && activeLog.type === type) {
-      handleClick(type);
+      stopLog(activeLog.id);
+      setExpandedAction(null);
+      return;
+    }
+    // For actions that require details, we expand the options instead of starting immediately
+    if (config.requiresDetails) {
+      setExpandedAction(prev => (prev === type ? null : type));
       return;
     }
 
-    if (type === 'feed' || type === 'diaper') {
-      setExpandedAction(prev => prev === type ? null : type);
-    } else {
-      handleClick(type);
-    }
-  };
+    // For instant actions, we can directly add the log without expanding options
+    startLog(type);
+  }
 
-  const handleClick = (type: LogType, detail?: string) => {
-    if (activeLog) {
-      if (activeLog.type == type) {
-        stopLog(activeLog.id);
-        setExpandedAction(null);
-      }
+  const handleOptionSelect = (type: LogType, value: string) => {
+    const config = ACTION_CONFIG[type];
+    // For instant actions, we add the log immediately with the selected detail
+    if (config.kind === 'instant') {
+      addLog(type, value);
     } else {
-      startLog(type, detail);
-      setExpandedAction(null);
-      console.log('Starting log:', { type, detail });
+      startLog(type, value);
     }
+
+    setExpandedAction(null);
   };
 
   return (
     <div className="space-y-3">
       <div className="bg-neutral-900 rounded-2xl overflow-hidden">
-        {actions.map((action) => {
-          const isActive = activeLog?.type === action.type;
-          const isOpen = expandedAction === action.type;
+        {typedEntries(ACTION_CONFIG).map(([type, config]) => {
+          const isActive = activeLog?.type === type;
+          const isOpen = expandedAction === type;
 
           return (
-            <div key={action.type}>
+            <div key={type}>
             <Button
-              key={action.type}
               label={
                 isActive
-                  ? `⏹ Stop ${action.label}`
-                  : `${action.icon} ${action.label}`
+                  ? `⏹ Stop ${config.label}`
+                  : `${config.icon} ${config.label}`
               }
-              onClickHandle={() => toggle(action.type)}
+              onClickHandle={() => handleMainActionClick(type)}
               isOpen={isOpen}
               isActive={isActive}
               disabled={!!activeLog && !isActive}
             />
 
-            {isOpen && (
+            {isOpen && config.requiresDetails && (
               <ActionCard
-                key={action.type}
                 isOpen={isOpen}
-                description={`${action.description}`}
-                type={action.type}
-                onClick={(detail) => {
-                  handleClick(action.type, detail);
+                description={`${config.description}`}
+                options={config.options || []}
+                onClick={(value) => {
+                  handleOptionSelect(type, value);
                 }}
               />
             )}

@@ -33,7 +33,7 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
       type,
       startTime: new Date().getTime(),
       details: description,
-      status: null,
+      status: 'completed',
     }
 
     const updatedLogs = storage.addLog(newLog);
