@@ -5,6 +5,7 @@ type ActionType = {
   description?: string;
   icon: string;
   kind: 'instant' | 'timed';
+  alertAfter?: number;
   requiresDetails: boolean;
   options?: {
     label: string;
@@ -17,6 +18,7 @@ export const ACTION_CONFIG: Record<LogType, ActionType> = {
     label: 'Sleep',
     icon: '😴',
     kind: 'timed',
+    alertAfter:  10000,
     requiresDetails: false
   },
   feed: {
@@ -24,6 +26,7 @@ export const ACTION_CONFIG: Record<LogType, ActionType> = {
     description: 'Which side?',
     icon: '🍼',
     kind: 'timed',
+    alertAfter: 10000, // 10 seconds
     requiresDetails: true,
     options: [
       { label: 'Left', value: 'left' },
